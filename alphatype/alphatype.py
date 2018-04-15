@@ -34,37 +34,37 @@ def parse_args():
 
 
 def main(letters, alphabet_name='English'):
-    import timer
+    from timer import Timer
     import getch
-    timer = timer.Timer()
-    print('Print the {} alphabet as fast as you can.'.format(alphabet_name))
-    was_correct = alphatype(letters, getch.getch, timer)
-    if was_correct:
-        print('\nFinished in {} seconds.'.format(round(timer.time, 2)))
-    else:
-        print('\nWrong letter!')
+    while True:
+        timer = Timer()
+        print('Print the {} alphabet as fast as you can.'.format(alphabet_name))
+        was_correct = alphatype(letters, getch.getch, timer)
+        if was_correct:
+            print('\nFinished in {} seconds.\n'.format(round(timer.time, 2)))
+        else:
+            print('\nWrong letter!\n')
 
 
-def alphatype(character_sequence, get_next_character, timer, silent=False):
+def alphatype(character_sequence, get_next_character, timer, echo=True):
     first_input = True
-    while character_sequence:
-        next_character = get_next_character()
-        if not silent:
-            print(next_character, end='')
-            sys.stdout.flush()
+    for correct_character in character_sequence:
+        typed_character = get_next_character(echo)
         if first_input:
             timer.start()
             first_input = False
-        if next_character != character_sequence[0]:
+        if typed_character != correct_character:
             return False
-        character_sequence = character_sequence[1:]
     timer.stop()
     return True
 
 
 if __name__ == '__main__':
     args = parse_args()
-    if args.alphabet == 'sv':
-        main('abcdefghijklmnopqrstuvwxyzåäö', alphabet_name='Swedish')
-    else:
-        main('abcdefghijklmnopqrstuvwxyz')
+    try:
+        if args.alphabet == 'sv':
+            main('abcdefghijklmnopqrstuvwxyzåäö', alphabet_name='Swedish')
+        else:
+            main('abcdefghijklmnopqrstuvwxyz')
+    except (KeyboardInterrupt, EOFError):
+        print('\nExiting...')

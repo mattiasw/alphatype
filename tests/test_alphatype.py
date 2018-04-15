@@ -37,7 +37,7 @@ class AlphatypeTests(unittest.TestCase):
     def create_getch(self, characters, timer=mock.Mock()):
         first_input = True
 
-        def get_next_character():
+        def get_next_character(echo):
             nonlocal characters, first_input
 
             next_character = characters[0]
@@ -56,7 +56,7 @@ class AlphatypeTests(unittest.TestCase):
                 'ab',
                 self.create_getch('ab'),
                 mock.Mock(),
-                silent=True,
+                echo=False,
         ))
 
     def test_handles_faulty_sequence_of_characters(self):
@@ -65,7 +65,7 @@ class AlphatypeTests(unittest.TestCase):
                 'abc',
                 self.create_getch('ac'),
                 mock.Mock(),
-                silent=True,
+                echo=False,
         ))
 
     def test_start_and_stop_timer(self):
@@ -75,7 +75,7 @@ class AlphatypeTests(unittest.TestCase):
                 'abcdef',
                 self.create_getch('abcdef', timer),
                 timer,
-                silent=True,
+                echo=False,
         )
         timer.start.assert_called_once_with()
         timer.stop.assert_called_once_with()

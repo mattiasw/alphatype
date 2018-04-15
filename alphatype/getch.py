@@ -15,19 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Alphatype. If not, see <https://www.gnu.org/licenses/>.
 
+import sys
+
 try:
     import msvcrt
 
-    def getch():
-        """Wait for a keypress and return the corresponding character"""
+    def _getch():
         return msvcrt.getch()
 except ImportError:
-    import sys
     import tty
     import termios
 
-    def getch():
-        """Wait for a keypress and return the corresponding character"""
+    def _getch():
         stdin_file_descriptor = sys.stdin.fileno()
         original_attributes = termios.tcgetattr(stdin_file_descriptor)
         try:
@@ -39,3 +38,16 @@ except ImportError:
                     termios.TCSADRAIN,
                     original_attributes
             )
+
+
+def getch(echo=True):
+    """Wait for a keypress and return the corresponding character"""
+    character = _getch()
+    if character == '\x03':
+        raise KeyboardInterrupt
+    elif character == '\x04':
+        raise EOFError
+    if (echo):
+        print(character, end='')
+        sys.stdout.flush()
+    return character
